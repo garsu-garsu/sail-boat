@@ -1,0 +1,17 @@
+project_id = "sailboat"
+
+# toss-auth: 클라이언트가 인가코드를 보낼 때 Supabase JWT 가 아직 없으므로 검증 끔
+[functions.toss-auth]
+verify_jwt = false
+
+# toss-disconnect: 토스 서버가 직접 호출 → Supabase JWT 없음. Basic Auth 로 자체 검증
+[functions.toss-disconnect]
+verify_jwt = false
+
+# report-alert: DB 트리거(pg_net)가 호출 → Supabase JWT 없음. x-alert-secret 헤더로 자체 검증
+[functions.report-alert]
+verify_jwt = false
+
+# push-notify: DB 트리거(pg_net)가 호출 → Supabase JWT 없음. x-push-secret 헤더로 자체 검증
+[functions.push-notify]
+verify_jwt = false

@@ -1,0 +1,30 @@
+# 의존성
+node_modules/
+
+# 빌드 산출물
+dist/
+*.ait
+
+# 환경 변수 / 비밀 (실제 값은 커밋하지 않아요 — .env.example 참고)
+.env
+.env.local
+.env.*.local
+
+# 로그
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 일회용 임시 스크립트 (예: scripts/_wipe.mjs)
+scripts/_*
+
+# 에디터 / OS
+.DS_Store
+.vscode/
+.idea/
+Thumbs.db
+
+# Supabase 로컬 캐시
+supabase/.branches/
+supabase/.temp/

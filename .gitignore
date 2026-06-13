@@ -28,3 +28,12 @@ Thumbs.db
 # Supabase 로컬 캐시
 supabase/.branches/
 supabase/.temp/
+
+# 인증서 / 키 (토스 mTLS 등 — 절대 커밋 금지)
+*.zip
+*.crt
+*.key
+*.pem
+
+# 크래시 덤프
+*.stackdump

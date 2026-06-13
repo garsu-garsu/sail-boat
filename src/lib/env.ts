@@ -4,8 +4,26 @@
 export const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? "";
 export const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? "";
 
-/** 광고 그룹 ID (앱인토스 콘솔에서 발급). 비어있으면 광고는 무시되고 콜백만 즉시 실행돼요. */
-export const AD_GROUP_ID = import.meta.env.VITE_AD_GROUP_ID ?? "";
+// 광고 그룹 ID (앱인토스 콘솔 > 수익화 > 인앱광고에서 광고 유형별로 발급).
+// 비어있으면 해당 광고는 무시돼요(보상형은 콜백을 즉시 실행해 개발/브라우저에서도 흐름이 끊기지 않아요).
+const LEGACY_AD_GROUP_ID = import.meta.env.VITE_AD_GROUP_ID ?? "";
+
+/** 배너 광고 그룹 ID (TossAds.attachBanner). 비어있으면 배너를 렌더링하지 않아요. */
+export const AD_GROUP_ID_BANNER = import.meta.env.VITE_AD_GROUP_ID_BANNER ?? "";
+
+/** 전면형 광고 그룹 ID (loadFullScreenAd). 비어있으면 전면 광고를 건너뛰어요. */
+export const AD_GROUP_ID_INTERSTITIAL =
+  import.meta.env.VITE_AD_GROUP_ID_INTERSTITIAL ?? "";
+
+/**
+ * 보상형 광고 그룹 ID (loadFullScreenAd + userEarnedReward).
+ * 구버전 변수명(VITE_AD_GROUP_ID)을 폴백으로 둬서 기존 설정과 호환돼요.
+ */
+export const AD_GROUP_ID_REWARDED =
+  import.meta.env.VITE_AD_GROUP_ID_REWARDED ?? LEGACY_AD_GROUP_ID;
+
+/** @deprecated AD_GROUP_ID_REWARDED 를 사용하세요. (구버전 호환용 별칭) */
+export const AD_GROUP_ID = AD_GROUP_ID_REWARDED;
 
 /**
  * 알림 수신 동의 템플릿 코드 (앱인토스 콘솔 > 스마트 발송에서 발급).

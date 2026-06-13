@@ -46,6 +46,8 @@ export const EVENT = {
   chatMessageSent: "chat_message_sent",
   shareCompleted: "share_completed", // params: { context }
   adRewarded: "ad_rewarded", // params: { context }
+  adInterstitial: "ad_interstitial_shown", // params: { context }
+  adBannerImpression: "ad_banner_impression", // params: { slot }
   reportSubmitted: "report_submitted", // params: { type }
   loginUpsellClick: "login_upsell_click", // params: { subject }
   notifyConsent: "notify_consent", // params: { result }

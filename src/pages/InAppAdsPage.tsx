@@ -2,18 +2,15 @@ import { colors } from "@toss/tds-colors";
 import { Button, List, ListRow, TextButton, Top } from "@toss/tds-mobile";
 
 import { useInAppAds } from "../hooks/useInAppAds";
-
-// TODO: 서비스를 출시하기 전에 앱인토스 콘솔에서 발급한 광고그룹ID로 변경해주세요.
-const TEST_INTERSTITIAL_ID = "ait-ad-test-interstitial-id";
-const TEST_REWARDED_ID = "ait-ad-test-rewarded-id";
+import { AD_GROUP_ID_INTERSTITIAL, AD_GROUP_ID_REWARDED } from "../lib/env";
 
 interface InAppAdsPageProps {
   onBack: () => void;
 }
 
 export function InAppAdsPage({ onBack }: InAppAdsPageProps) {
-  const interstitial = useInAppAds(TEST_INTERSTITIAL_ID);
-  const rewarded = useInAppAds(TEST_REWARDED_ID);
+  const interstitial = useInAppAds(AD_GROUP_ID_INTERSTITIAL);
+  const rewarded = useInAppAds(AD_GROUP_ID_REWARDED);
 
   return (
     <>

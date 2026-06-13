@@ -11,6 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import { ScreenLayout } from "../../components/ScreenLayout";
 import { listInboxBottles } from "../../data/bottles";
+import { useInterstitialAd } from "../../hooks/useInterstitialAd";
 import { useRouter } from "../../router";
 import { useSession } from "../../session";
 import { glassCard, ocean } from "../../theme";
@@ -26,6 +27,7 @@ export function ReceiveScreen() {
   const { navigate } = useRouter();
   const { profile, isGuest } = useSession();
   const { openToast } = useToast();
+  const { maybeShow } = useInterstitialAd();
 
   const [inbox, setInbox] = useState<Bottle[] | null>(null);
 
@@ -136,7 +138,12 @@ export function ReceiveScreen() {
                     ) : undefined
                   }
                   withArrow
-                  onClick={() => navigate({ name: "read", bottleId: b.id })}
+                  onClick={() =>
+                    maybeShow(
+                      () => navigate({ name: "read", bottleId: b.id }),
+                      "read",
+                    )
+                  }
                 />
               ))}
             </List>

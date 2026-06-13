@@ -5,7 +5,7 @@ import {
 import { useToast } from "@toss/tds-mobile";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import { AD_GROUP_ID } from "../lib/env";
+import { AD_GROUP_ID_REWARDED } from "../lib/env";
 import { EVENT, track } from "../lib/analytics";
 
 interface UseAdGateReturn {
@@ -13,7 +13,7 @@ interface UseAdGateReturn {
   ready: boolean;
   /**
    * 광고를 보여주고, 보상을 받으면 onReward 를 실행해요.
-   * 광고가 지원되지 않거나(브라우저/개발) AD_GROUP_ID 가 비어있으면 즉시 onReward 실행.
+   * 광고가 지원되지 않거나(브라우저/개발) AD_GROUP_ID_REWARDED 가 비어있으면 즉시 onReward 실행.
    * context 는 분석용 구분값이에요 (예: 'send' | 'reply' | 'chat').
    */
   watchThen: (onReward: () => void, context?: string) => void;
@@ -30,12 +30,12 @@ export function useAdGate(): UseAdGateReturn {
   const unloadRef = useRef<(() => void) | null>(null);
 
   const load = useCallback(() => {
-    if (AD_GROUP_ID === "") return;
+    if (AD_GROUP_ID_REWARDED === "") return;
     try {
       if (!loadFullScreenAd.isSupported()) return;
       supportedRef.current = true;
       unloadRef.current = loadFullScreenAd({
-        options: { adGroupId: AD_GROUP_ID },
+        options: { adGroupId: AD_GROUP_ID_REWARDED },
         onEvent: (e) => {
           if (e.type === "loaded") setReady(true);
         },
@@ -54,7 +54,7 @@ export function useAdGate(): UseAdGateReturn {
   const watchThen = useCallback(
     (onReward: () => void, context?: string) => {
       // 광고 미설정/미지원 환경 → 즉시 통과 (개발 편의)
-      if (AD_GROUP_ID === "" || !supportedRef.current) {
+      if (AD_GROUP_ID_REWARDED === "" || !supportedRef.current) {
         onReward();
         return;
       }
@@ -67,7 +67,7 @@ export function useAdGate(): UseAdGateReturn {
       let rewarded = false;
       try {
         showFullScreenAd({
-          options: { adGroupId: AD_GROUP_ID },
+          options: { adGroupId: AD_GROUP_ID_REWARDED },
           onEvent: (e) => {
             if (e.type === "userEarnedReward") {
               rewarded = true;

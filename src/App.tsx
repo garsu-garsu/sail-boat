@@ -3,6 +3,7 @@ import "./App.css";
 import { closeView, graniteEvent } from "@apps-in-toss/web-framework";
 import { useEffect } from "react";
 
+import { BannerAd } from "./components/BannerAd";
 import { BottomNav } from "./components/BottomNav";
 import { trackScreen } from "./lib/analytics";
 import { ComposeScreen } from "./features/compose/ComposeScreen";
@@ -110,6 +111,7 @@ function Shell() {
       <div style={{ flex: 1, minHeight: 0 }}>
         <CurrentScreen />
       </div>
+      {showTabs && <BannerAd slot={route.name} />}
       {showTabs && <BottomNav />}
     </div>
   );

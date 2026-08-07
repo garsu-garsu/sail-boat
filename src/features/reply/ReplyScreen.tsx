@@ -65,8 +65,10 @@ export function ReplyScreen({ bottleId }: { bottleId: string }) {
       });
       if (!ok) return;
     }
-    setSending(true);
+    // setSending 은 광고 보상을 받은 뒤에 켜요. 광고 전에 켜면 사용자가 광고를
+    // 중간에 닫았을 때 보내기 버튼이 로딩 상태로 굳어 다시 못 보내요.
     watchThen(async () => {
+      setSending(true);
       try {
         await sendReply(bottleId, trimmed);
         track(EVENT.replySent, {});

@@ -76,19 +76,24 @@ export function useAdGate(): UseAdGateReturn {
               setReady(false);
               load();
               if (rewarded) onReward();
+              // 보상 없이 닫았으면 아무 일도 안 일어나요. 왜 안 됐는지 알려줘야 해요.
+              else toast.openToast("광고를 끝까지 봐야 이어서 진행돼요.");
             } else if (e.type === "failedToShow") {
               setReady(false);
               load();
+              toast.openToast("광고를 띄우지 못했어요. 잠시 후 다시 시도해 주세요.");
             }
           },
           onError: (err) => {
             console.error("광고 표시 실패:", err);
             setReady(false);
             load();
+            toast.openToast("광고를 띄우지 못했어요. 잠시 후 다시 시도해 주세요.");
           },
         });
       } catch (err) {
         console.error("광고 표시 실패:", err);
+        toast.openToast("광고를 띄우지 못했어요. 잠시 후 다시 시도해 주세요.");
       }
     },
     [ready, load, toast],

@@ -22,6 +22,8 @@ import { SessionProvider, useSession } from "./session";
 // 하단 탭이 보이는 메인 화면들
 const TAB_SCREENS: RouteName[] = ["home", "receive", "replies"];
 
+const ONBOARDED_KEY = "sailboat:onboarded";
+
 function CurrentScreen() {
   const { route } = useRouter();
 
@@ -50,9 +52,22 @@ function CurrentScreen() {
 }
 
 function Shell() {
-  const { route, back, canGoBack } = useRouter();
-  const { loading } = useSession();
+  const { route, back, canGoBack, reset } = useRouter();
+  const { loading, profile } = useSession();
   const showTabs = TAB_SCREENS.includes(route.name);
+
+  // 처음 켠 사람에게는 홈 대신 소개 화면부터 보여줘요. 한 번 보고 나면 다시 뜨지 않고,
+  // 이미 로그인한 사람은 건너뛰어요.
+  useEffect(() => {
+    if (loading || profile != null) return;
+    try {
+      if (localStorage.getItem(ONBOARDED_KEY) != null) return;
+      localStorage.setItem(ONBOARDED_KEY, "1");
+    } catch {
+      return; // 저장이 막힌 환경에서는 매번 띄우지 않고 그냥 홈으로
+    }
+    reset({ name: "onboarding" });
+  }, [loading, profile, reset]);
 
   // 화면 조회 분석 (route 이름 기준)
   useEffect(() => {
@@ -80,6 +95,24 @@ function Shell() {
       return undefined;
     }
   }, [back, canGoBack]);
+
+  // 우측 상단 닫기(홈) 버튼 — 어느 화면에 있든 앱을 닫아요.
+  // backEvent 만 구독하면 이 버튼을 아무도 처리하지 않아 눌러도 안 닫혀요.
+  useEffect(() => {
+    try {
+      return graniteEvent.addEventListener("homeEvent", {
+        onEvent: () => {
+          try {
+            void closeView();
+          } catch {
+            /* 브라우저 등 미지원 환경 */
+          }
+        },
+      });
+    } catch {
+      return undefined;
+    }
+  }, []);
 
   if (loading) {
     return (

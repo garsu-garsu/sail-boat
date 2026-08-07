@@ -3,7 +3,7 @@ import { defineConfig } from "@apps-in-toss/web-framework/config";
 export default defineConfig({
   appName: "sailboat",
   brand: {
-    displayName: "돛단배", // 화면에 노출될 앱의 한글 이름
+    displayName: "돛단배 익명편지", // 화면에 노출될 앱의 한글 이름
     primaryColor: "#9575CD", // 앱 기본 색상 (바다/유리병 톤)
     icon: "https://static.toss.im/appsintoss/13203/b1d22d57-56c1-4ccf-8fdf-c1c44fba457a.png", // TODO: 앱 아이콘 이미지 주소
   },

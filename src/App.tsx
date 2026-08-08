@@ -146,6 +146,9 @@ function Shell() {
       <div style={{ flex: 1, minHeight: 0 }}>
         <CurrentScreen />
       </div>
+      {/* 본문(ScreenLayout)만 스크롤하고 이 두 줄은 화면 하단에 고정돼요.
+          position: fixed 를 따로 주면 탭 위에 겹쳐 올라가서 이 순서를 그대로 둡니다.
+          배너는 탭이 보이는 화면에서만 — 한 화면에 배너는 하나입니다. */}
       {showTabs && <BannerAd slot={route.name} />}
       {showTabs && <BottomNav />}
     </div>

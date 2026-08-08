@@ -14,10 +14,21 @@ interface BannerAdProps {
 // TossAds.attachBanner 는 네이티브 광고 SDK를 대상 DOM에 붙여요.
 // - 브라우저/미지원 환경에서는 isSupported() 가 false → 아무것도 렌더링하지 않아요.
 // - AD_GROUP_ID_BANNER 가 비어있으면(미설정) 렌더링하지 않아요.
-/** 화면 하단 등에 붙이는 배너 광고. 지원되지 않으면 공간을 차지하지 않아요. */
+/**
+ * 한 번 붙은 배너는 같은 광고를 계속 물고 있어요. 주기마다 떼었다 다시 붙여
+ * 새 광고를 받아옵니다.
+ *
+ * 30초인 이유: 토스 배너는 AdMob 기반인데 AdMob 은 30초보다 잦은 갱신을
+ * 무효 트래픽으로 봐요. 더 짧게 잡으면 수익보다 제재 위험이 커져요.
+ */
+const REFRESH_MS = 30_000;
+
+/** 화면 하단에 고정으로 붙이는 배너 광고. 지원되지 않으면 공간을 차지하지 않아요. */
 export function BannerAd({ slot }: BannerAdProps) {
   const targetRef = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
+  // 이 값이 바뀔 때마다 아래 effect 가 다시 돌면서 배너를 새로 붙여요.
+  const [round, setRound] = useState(0);
 
   useEffect(() => {
     const target = targetRef.current;
@@ -37,7 +48,9 @@ export function BannerAd({ slot }: BannerAdProps) {
         /* 초기화 중복/미지원 무시 */
       }
 
-      const { destroy } = TossAds.attachBanner(AD_GROUP_ID_BANNER, target, {
+      // destroy 를 따로 떼어내면 SDK 안에서 this 를 잃어 정리가 안 될 수 있어요.
+      // 객체째 들고 있다가 attached.destroy() 로 부릅니다.
+      const attached = TossAds.attachBanner(AD_GROUP_ID_BANNER, target, {
         theme: "auto",
         variant: "card",
         callbacks: {
@@ -52,7 +65,7 @@ export function BannerAd({ slot }: BannerAdProps) {
           onNoFill: () => setVisible(false),
         },
       });
-      detach = destroy;
+      detach = () => attached?.destroy();
     } catch (err) {
       console.error("배너 광고 연결 실패:", err);
     }
@@ -64,7 +77,30 @@ export function BannerAd({ slot }: BannerAdProps) {
         /* noop */
       }
     };
-  }, [slot]);
+  }, [slot, round]);
+
+  // 화면을 보고 있을 때만 갱신해요. 안 보이는 동안 돌리면 노출로 잡히지 않고
+  // 호출만 쌓여요.
+  useEffect(() => {
+    if (AD_GROUP_ID_BANNER === "") return;
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const stop = () => {
+      if (timer != null) clearInterval(timer);
+      timer = undefined;
+    };
+    const start = () => {
+      stop();
+      timer = setInterval(() => setRound((n) => n + 1), REFRESH_MS);
+    };
+    const onVisibility = () => (document.hidden ? stop() : start());
+
+    if (!document.hidden) start();
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      stop();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, []);
 
   // 미설정 환경에서는 빈 컨테이너조차 만들지 않아요.
   if (AD_GROUP_ID_BANNER === "") return null;

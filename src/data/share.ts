@@ -6,7 +6,7 @@ const SHARE_TEXT =
   "낯선 누군가에게 익명 편지를 띄우고, 랜덤으로 편지를 받아요 🌊 유리병 편지 앱 [돛단배]";
 
 // getTossShareLink 는 `intoss://` 로 시작하는 딥링크만 받아요. "/" 같은 웹 경로를 주면
-// 링크가 만들어지지 않아 텍스트만 공유돼요. appName(granite.config.ts) 과 같아야 해요.
+// 링크가 만들어지지 않아 텍스트만 공유돼요. appName(apps-in-toss.config.ts) 과 같아야 해요.
 const DEEP_LINK = "intoss://sailboat";
 const OG_IMAGE =
   "https://static.toss.im/appsintoss/13203/b1d22d57-56c1-4ccf-8fdf-c1c44fba457a.png";

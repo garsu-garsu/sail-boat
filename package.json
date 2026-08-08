@@ -4,14 +4,15 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "dev": "granite dev",
-    "build": "ait build",
+    "dev": "vite dev",
+    "build": "vite build && ait build",
     "deploy": "ait deploy",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "typecheck": "tsc -b --force"
   },
   "dependencies": {
-    "@apps-in-toss/web-framework": "^2.6.1",
+    "@apps-in-toss/web-framework": "^3.0.2",
     "@emotion/react": "^11.14.0",
     "@supabase/supabase-js": "^2.107.0",
     "@toss/tds-colors": "^0.1.0",
@@ -21,6 +22,7 @@
     "react-dom": "^18.3.1"
   },
   "devDependencies": {
+    "@apps-in-toss/devtools": "^3.0.2",
     "@eslint/js": "^9.21.0",
     "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@playwright/test": "^1.60.0",

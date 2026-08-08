@@ -8,7 +8,7 @@ export const ocean = {
   sand: "#F3E9D2",
   foam: "rgba(255,255,255,0.85)",
   bottleGlass: "rgba(178, 222, 247, 0.55)",
-  primary: "#9575CD", // granite.config primaryColor 와 동일
+  primary: "#9575CD", // apps-in-toss.config primaryColor 와 동일
   white: colors.white,
   ink: "#1B3B6F",
 };

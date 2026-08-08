@@ -56,8 +56,10 @@ function Shell() {
   const { loading, profile } = useSession();
   const showTabs = TAB_SCREENS.includes(route.name);
 
-  // 처음 켠 사람에게는 홈 대신 소개 화면부터 보여줘요. 한 번 보고 나면 다시 뜨지 않고,
+  // 처음 켠 사람에게는 소개 화면부터 보여줘요. 한 번 보고 나면 다시 뜨지 않고,
   // 이미 로그인한 사람은 건너뛰어요.
+  // 소개 화면에서는 로그인을 요구하지 않아요(reset 이라 canGoBack=false → 둘러보기 모드).
+  // 로그인은 편지를 보내거나 받은 편지를 열 때(행동 직전)에 받아요.
   useEffect(() => {
     if (loading || profile != null) return;
     try {

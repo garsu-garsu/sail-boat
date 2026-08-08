@@ -2,6 +2,7 @@ import { useEffect } from "react";
 
 import { Button, Paragraph, useToast } from "@toss/tds-mobile";
 
+import { SampleLetterCard } from "../../components/SampleLetterCard";
 import { ScreenLayout } from "../../components/ScreenLayout";
 import { canRequestNotifyConsent, requestNotifyConsent } from "../../data/notify";
 import { EVENT, track } from "../../lib/analytics";
@@ -51,12 +52,14 @@ export function HomeScreen() {
   }
   const demographicSummary = summaryParts.join(" · ");
 
+  // 로그인 전이어도 해당 화면으로 바로 보내요. 각 화면이 필요한 순간에만 로그인을 받고,
+  // 로그인이 끝나면 하던 자리로 되돌아와요.
   const handleFloat = () => {
-    navigate(isLoggedIn ? { name: "compose" } : { name: "onboarding" });
+    navigate({ name: "compose" });
   };
 
   const handlePick = () => {
-    navigate(isLoggedIn ? { name: "receive" } : { name: "onboarding" });
+    navigate({ name: "receive" });
   };
 
   const handleLogout = async () => {
@@ -87,9 +90,9 @@ export function HomeScreen() {
           color={ocean.white}
           style={{ margin: 0, lineHeight: 1.5, opacity: 0.95 }}
         >
-          유리병에 마음을 담아 바다에 띄워보세요.
+          누가 받을지 모르는 익명 편지를 유리병에 담아 띄우고,
           <br />
-          언젠가 누군가에게 닿아요.
+          낯선 누군가의 편지를 랜덤으로 받아요.
         </Paragraph>
       </div>
 
@@ -117,28 +120,9 @@ export function HomeScreen() {
           )}
         </div>
       ) : (
-        <div
-          style={{
-            ...glassCard,
-            marginTop: 16,
-            textAlign: "center",
-            padding: 16,
-          }}
-        >
-          <Paragraph
-            typography="t6"
-            color={ocean.ink}
-            style={{ margin: "0 0 12px", lineHeight: 1.5 }}
-          >
-            토스로 시작하면 받을 사람 조건을 골라 편지를 보낼 수 있어요.
-          </Paragraph>
-          <Button
-            size="medium"
-            display="inline"
-            onClick={() => navigate({ name: "onboarding" })}
-          >
-            시작하기
-          </Button>
+        /* 로그인 전에는 설명 대신 읽을거리부터 보여줘요. 로그인은 편지를 쓰거나 열 때 받아요. */
+        <div style={{ marginTop: 16 }}>
+          <SampleLetterCard context="home" />
         </div>
       )}
 
@@ -164,6 +148,16 @@ export function HomeScreen() {
         >
           📩 받은 편지함
         </Button>
+        {!isLoggedIn && (
+          <Paragraph
+            typography="t7"
+            color={ocean.ink}
+            textAlign="center"
+            style={{ margin: 0, lineHeight: 1.5, opacity: 0.7 }}
+          >
+            토스로 시작하면 받을 사람 조건을 골라 편지를 보낼 수 있어요.
+          </Paragraph>
+        )}
       </div>
 
       {/* 로그아웃 */}

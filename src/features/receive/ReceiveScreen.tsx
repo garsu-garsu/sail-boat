@@ -9,7 +9,9 @@ import {
 } from "@toss/tds-mobile";
 import { useCallback, useEffect, useState } from "react";
 
+import { SampleLetterCard } from "../../components/SampleLetterCard";
 import { ScreenLayout } from "../../components/ScreenLayout";
+import { ShareAppButton } from "../../components/ShareAppButton";
 import { listInboxBottles } from "../../data/bottles";
 import { useInterstitialAd } from "../../hooks/useInterstitialAd";
 import { useRouter } from "../../router";
@@ -45,29 +47,31 @@ export function ReceiveScreen() {
     if (profile != null) void load();
   }, [profile, load]);
 
-  // 로그인 전 안내
+  // 로그인 전 — 빈 화면 대신 맛보기 편지를 먼저 읽게 하고, 로그인은 그다음에 권해요.
   if (profile == null) {
     return (
-      <ScreenLayout title="받은 편지함" background="sky">
-        <div style={{ ...glassCard, textAlign: "center", marginTop: 40 }}>
-          <div style={{ fontSize: 56, marginBottom: 12 }}>📩</div>
-          <Paragraph
-            typography="t6"
-            color={ocean.ink}
-            style={{ margin: "0 0 20px", lineHeight: 1.6 }}
-          >
-            받은 편지를 보려면
-            <br />
-            먼저 항해를 시작해 주세요.
-          </Paragraph>
+      <ScreenLayout
+        title="받은 편지함"
+        background="sky"
+        footer={
           <Button
             display="full"
-            size="large"
+            size="xlarge"
             onClick={() => navigate({ name: "onboarding" })}
           >
-            항해 시작하기
+            시작하고 내 편지 받기
           </Button>
-        </div>
+        }
+      >
+        <Paragraph
+          typography="t7"
+          color={ocean.white}
+          style={{ margin: "0 4px 12px", lineHeight: 1.6, opacity: 0.9 }}
+        >
+          시작하면 낯선 누군가의 익명 편지가 여기로 랜덤으로 도착해요. 먼저
+          어떤 편지들이 오가는지 읽어보세요.
+        </Paragraph>
+        <SampleLetterCard context="receive_logged_out" />
       </ScreenLayout>
     );
   }
@@ -93,18 +97,28 @@ export function ReceiveScreen() {
           <Loader type="light" />
         </div>
       ) : inbox.length === 0 ? (
-        <div style={{ ...glassCard, textAlign: "center", marginTop: 24, padding: 28 }}>
-          <div style={{ fontSize: 48, marginBottom: 12 }}>🌊</div>
-          <Paragraph
-            typography="t6"
-            color={ocean.ink}
-            style={{ margin: 0, lineHeight: 1.6, opacity: 0.85 }}
-          >
-            아직 받은 편지가 없어요.
-            <br />
-            먼저 편지를 보내면 누군가의 답장이 올 수도 있어요!
-          </Paragraph>
-        </div>
+        /* 빈 편지함 — 그냥 비워두면 바로 나가요. 읽을거리와 할 일을 같이 놓아요. */
+        <>
+          <div style={{ ...glassCard, textAlign: "center", padding: 24 }}>
+            <div style={{ fontSize: 48, marginBottom: 12 }}>🌊</div>
+            <Paragraph
+              typography="t6"
+              color={ocean.ink}
+              style={{ margin: 0, lineHeight: 1.6, opacity: 0.85 }}
+            >
+              아직 도착한 편지가 없어요.
+              <br />
+              편지는 누군가 띄우는 순간 무작위로 배달돼요. 사람이 많을수록 더
+              자주 도착해요.
+            </Paragraph>
+            <div style={{ marginTop: 16 }}>
+              <ShareAppButton context="inbox_empty" label="🔗 친구에게 알리기" />
+            </div>
+          </div>
+          <div style={{ marginTop: 14 }}>
+            <SampleLetterCard context="inbox_empty" />
+          </div>
+        </>
       ) : (
         <>
           {isGuest && <LoginUpsell subject="편지" />}

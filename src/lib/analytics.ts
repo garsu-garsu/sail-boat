@@ -50,5 +50,6 @@ export const EVENT = {
   adBannerImpression: "ad_banner_impression", // params: { slot }
   reportSubmitted: "report_submitted", // params: { type }
   loginUpsellClick: "login_upsell_click", // params: { subject }
+  samplePeek: "sample_letter_peek", // params: { context }
   notifyConsent: "notify_consent", // params: { result }
 } as const;

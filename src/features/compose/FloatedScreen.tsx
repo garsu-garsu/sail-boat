@@ -1,6 +1,7 @@
 import { Button, Paragraph } from "@toss/tds-mobile";
 
 import { ScreenLayout } from "../../components/ScreenLayout";
+import { ShareAppButton } from "../../components/ShareAppButton";
 import { useRouter } from "../../router";
 import { boatEmoji, bottleEmoji, ocean, waveEmoji } from "../../theme";
 
@@ -75,6 +76,16 @@ export function FloatedScreen() {
         >
           바다 건너 누군가에게 닿았어요. 답장이 올지도 몰라요. {waveEmoji}
         </Paragraph>
+        <Paragraph
+          typography="t7"
+          color={ocean.white}
+          textAlign="center"
+          style={{ margin: "16px 0 0", lineHeight: 1.6, opacity: 0.8 }}
+        >
+          돛단배는 사람이 많을수록 편지가 자주 오가요.
+          <br />
+          친구에게 알리면 내 편지함에도 편지가 더 빨리 도착해요.
+        </Paragraph>
       </div>
 
       <div
@@ -86,22 +97,32 @@ export function FloatedScreen() {
           paddingBottom: "max(12px, env(safe-area-inset-bottom))",
         }}
       >
-        <Button
-          size="xlarge"
-          display="full"
-          onClick={() => reset({ name: "receive" })}
-        >
-          받은 편지함 보기
-        </Button>
+        <ShareAppButton context="floated" label="🔗 친구에게 돛단배 알리기" />
         <Button
           size="xlarge"
           display="full"
           color="dark"
           variant="weak"
+          onClick={() => reset({ name: "receive" })}
+        >
+          받은 편지함 보기
+        </Button>
+        <button
+          type="button"
           onClick={() => reset({ name: "home" })}
+          style={{
+            border: "none",
+            background: "transparent",
+            color: ocean.white,
+            fontSize: 14,
+            opacity: 0.85,
+            cursor: "pointer",
+            padding: 8,
+            textDecoration: "underline",
+          }}
         >
           홈으로
-        </Button>
+        </button>
       </div>
     </ScreenLayout>
   );

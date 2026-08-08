@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   Badge,
+  Button,
   List,
   ListRow,
   Loader,
@@ -10,8 +11,10 @@ import {
 } from "@toss/tds-mobile";
 
 import { ScreenLayout } from "../../components/ScreenLayout";
+import { ShareAppButton } from "../../components/ShareAppButton";
 import { getBottle } from "../../data/bottles";
 import { listReceivedReplies, markReplyRead } from "../../data/replies";
+import { useRouter } from "../../router";
 import { useSession } from "../../session";
 import type { Bottle, Reply, ReplyStatus } from "../../types";
 import { bottleEmoji, glassCard, ocean } from "../../theme";
@@ -44,6 +47,7 @@ function preview(text: string, max = 40): string {
 
 export function RepliesScreen() {
   const { openToast } = useToast();
+  const { navigate } = useRouter();
   const { isGuest } = useSession();
 
   const [replies, setReplies] = useState<Reply[]>([]);
@@ -135,8 +139,23 @@ export function RepliesScreen() {
             color={ocean.ink}
             style={{ margin: 0, lineHeight: 1.6 }}
           >
-            아직 받은 답장이 없어요. 편지를 더 띄워볼까요?
+            아직 받은 답장이 없어요.
+            <br />
+            편지를 한 통 더 띄우면 답장이 올 확률도 올라가요.
           </Paragraph>
+          <Button
+            size="xlarge"
+            display="full"
+            onClick={() => navigate({ name: "compose" })}
+          >
+            ✉️ 편지 띄우러 가기
+          </Button>
+          <ShareAppButton
+            context="replies_empty"
+            label="🔗 친구에게 알리기"
+            weak
+            size="large"
+          />
         </div>
       </ScreenLayout>
     );
@@ -245,6 +264,14 @@ export function RepliesScreen() {
                     >
                       익명 편지는 한 번의 답장으로 마무리돼요. 🌊
                     </Paragraph>
+
+                    {/* 답장을 막 읽은 순간이 공유가 가장 잘 나오는 지점이에요. */}
+                    <ShareAppButton
+                      context="reply_read"
+                      label="🔗 이 편지 앱 친구에게 알리기"
+                      weak
+                      size="large"
+                    />
 
                     <div style={{ textAlign: "right" }}>
                       <ReportButton

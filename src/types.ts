@@ -142,14 +142,3 @@ export const AGE_BAND_LABEL: Record<AgeBand, string> = {
   "50s": "50대",
   "60plus": "60대 이상",
 };
-
-/** 생년(YYYY) → 연령대 */
-export function birthYearToAgeBand(year: number, now = new Date()): AgeBand {
-  const age = now.getFullYear() - year;
-  if (age < 20) return "10s";
-  if (age < 30) return "20s";
-  if (age < 40) return "30s";
-  if (age < 50) return "40s";
-  if (age < 60) return "50s";
-  return "60plus";
-}

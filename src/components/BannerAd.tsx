@@ -1,12 +1,16 @@
 import { TossAds } from "@apps-in-toss/web-framework";
 import { useEffect, useRef, useState } from "react";
 
-import { AD_GROUP_ID_BANNER } from "../lib/env";
+import { AD_GROUP_ID_BANNER, AD_GROUP_ID_BANNER_IMAGE } from "../lib/env";
 import { EVENT, track } from "../lib/analytics";
 
 interface BannerAdProps {
   /** 분석용 노출 위치 구분값 (예: 'home' | 'receive' | 'replies') */
   slot?: string;
+  /** 광고그룹 ID. 비우면 문구 강조형(하단 고정) 지면을 써요. */
+  adGroupId?: string;
+  /** 자리 높이. 비우면 광고가 붙은 뒤 내용에 맞춰 커져요. */
+  height?: number;
 }
 
 // 참고문서: https://developers-apps-in-toss.toss.im/bedrock/reference/framework/광고/BannerAd.html
@@ -23,8 +27,13 @@ interface BannerAdProps {
  */
 const REFRESH_MS = 30_000;
 
-/** 화면 하단에 고정으로 붙이는 배너 광고. 지원되지 않으면 공간을 차지하지 않아요. */
-export function BannerAd({ slot }: BannerAdProps) {
+/**
+ * 배너 광고.
+ * - 기본값: 문구 강조형 — 화면 하단에 고정. 지원되지 않으면 공간을 차지하지 않아요.
+ * - ImageBannerAd: 이미지 강조형 — 각 화면 본문 맨 아래에 붙여요.
+ */
+export function BannerAd({ slot, adGroupId, height }: BannerAdProps = {}) {
+  const groupId = adGroupId ?? AD_GROUP_ID_BANNER;
   const targetRef = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
   // 이 값이 바뀔 때마다 아래 effect 가 다시 돌면서 배너를 새로 붙여요.
@@ -32,7 +41,7 @@ export function BannerAd({ slot }: BannerAdProps) {
 
   useEffect(() => {
     const target = targetRef.current;
-    if (AD_GROUP_ID_BANNER === "" || target == null) return;
+    if (groupId === "" || target == null) return;
 
     let detach: (() => void) | undefined;
 
@@ -50,7 +59,7 @@ export function BannerAd({ slot }: BannerAdProps) {
 
       // destroy 를 따로 떼어내면 SDK 안에서 this 를 잃어 정리가 안 될 수 있어요.
       // 객체째 들고 있다가 attached.destroy() 로 부릅니다.
-      const attached = TossAds.attachBanner(AD_GROUP_ID_BANNER, target, {
+      const attached = TossAds.attachBanner(groupId, target, {
         theme: "auto",
         variant: "card",
         callbacks: {
@@ -77,12 +86,12 @@ export function BannerAd({ slot }: BannerAdProps) {
         /* noop */
       }
     };
-  }, [slot, round]);
+  }, [slot, round, groupId]);
 
   // 화면을 보고 있을 때만 갱신해요. 안 보이는 동안 돌리면 노출로 잡히지 않고
   // 호출만 쌓여요.
   useEffect(() => {
-    if (AD_GROUP_ID_BANNER === "") return;
+    if (groupId === "") return;
     let timer: ReturnType<typeof setInterval> | undefined;
     const stop = () => {
       if (timer != null) clearInterval(timer);
@@ -100,19 +109,32 @@ export function BannerAd({ slot }: BannerAdProps) {
       stop();
       document.removeEventListener("visibilitychange", onVisibility);
     };
-  }, []);
+  }, [groupId]);
 
   // 미설정 환경에서는 빈 컨테이너조차 만들지 않아요.
-  if (AD_GROUP_ID_BANNER === "") return null;
+  if (groupId === "") return null;
 
   return (
     <div
       ref={targetRef}
-      style={{
-        // 광고가 실제로 렌더되기 전(또는 noFill)에는 높이 0 으로 공간을 차지하지 않아요.
-        minHeight: visible ? undefined : 0,
-        overflow: "hidden",
-      }}
+      style={
+        height != null
+          ? // 이미지형은 자리를 미리 잡아둬요. 높이 0 이면 광고가 렌더링되지 않아요.
+            { width: "100%", height }
+          : {
+              // 광고가 실제로 렌더되기 전(또는 noFill)에는 높이 0 으로 공간을 차지하지 않아요.
+              minHeight: visible ? undefined : 0,
+              overflow: "hidden",
+            }
+      }
     />
   );
+}
+
+/**
+ * 이미지 강조형 배너 — 각 화면 본문 맨 아래에 붙여요.
+ * 하단 고정 배너는 창에 붙어 있어 본문 흐름을 막지 않고, 이건 끝까지 내려야 보여요.
+ */
+export function ImageBannerAd() {
+  return <BannerAd adGroupId={AD_GROUP_ID_BANNER_IMAGE} height={200} />;
 }

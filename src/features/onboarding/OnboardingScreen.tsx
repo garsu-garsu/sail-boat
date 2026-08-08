@@ -73,7 +73,7 @@ export function OnboardingScreen() {
   };
 
   return (
-    <ScreenLayout title="익명 편지 시작하기" background="sky">
+    <ScreenLayout hideAd title="익명 편지 시작하기" background="sky">
       {/* 컨셉 3단계 카드 */}
       <div
         style={{ display: "flex", flexDirection: "column", gap: 12, marginTop: 8 }}

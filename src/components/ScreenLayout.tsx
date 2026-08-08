@@ -2,11 +2,14 @@ import type { ReactNode } from "react";
 
 import { Top } from "@toss/tds-mobile";
 
+import { ImageBannerAd } from "./BannerAd";
 import { isInTossApp } from "../lib/tossEnv";
 import { useRouter } from "../router";
 import { ocean } from "../theme";
 
 interface ScreenLayoutProps {
+  /** 소개·인트로 화면처럼 광고를 띄우면 안 되는 곳에서 켜요. */
+  hideAd?: boolean;
   title?: string;
   /** 뒤로가기 버튼 표시 (기본: 스택에 이전 화면이 있으면 표시) */
   showBack?: boolean;
@@ -26,6 +29,7 @@ interface ScreenLayoutProps {
  * 토스 밖(브라우저)에서는 네이티브 바가 없으므로 인앱 뒤로가기 버튼을 폴백으로 보여줘요.
  */
 export function ScreenLayout({
+  hideAd,
   title,
   showBack,
   headerRight,
@@ -88,6 +92,12 @@ export function ScreenLayout({
         )}
 
         {children}
+
+        {/* 이미지 강조형 배너 — 본문을 끝까지 내린 사람에게만 보여요.
+            하단 고정 배너는 창에 붙어 있고, 이건 콘텐츠 흐름의 맨 끝입니다. */}
+        <div style={{ marginTop: 24 }}>
+          {!hideAd && <ImageBannerAd />}
+        </div>
       </main>
 
       {footer != null && (

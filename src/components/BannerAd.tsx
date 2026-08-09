@@ -11,6 +11,11 @@ interface BannerAdProps {
   adGroupId?: string;
   /** 자리 높이. 비우면 광고가 붙은 뒤 내용에 맞춰 커져요. */
   height?: number;
+  /**
+   * 소재가 height 보다 크면 그만큼 늘어나게 해요.
+   * 하단 고정 배너에는 쓰면 안 돼요 — 위로 자라서 본문을 덮어요.
+   */
+  grow?: boolean;
 }
 
 // 참고문서: https://developers-apps-in-toss.toss.im/bedrock/reference/framework/광고/BannerAd.html
@@ -32,7 +37,7 @@ const REFRESH_MS = 30_000;
  * - 기본값: 문구 강조형 — 화면 하단에 고정. 지원되지 않으면 공간을 차지하지 않아요.
  * - ImageBannerAd: 이미지 강조형 — 각 화면 본문 맨 아래에 붙여요.
  */
-export function BannerAd({ slot, adGroupId, height }: BannerAdProps = {}) {
+export function BannerAd({ slot, adGroupId, height, grow }: BannerAdProps = {}) {
   const groupId = adGroupId ?? AD_GROUP_ID_BANNER;
   const targetRef = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
@@ -119,8 +124,11 @@ export function BannerAd({ slot, adGroupId, height }: BannerAdProps = {}) {
       ref={targetRef}
       style={
         height != null
-          ? // 이미지형은 자리를 미리 잡아둬요. 높이 0 이면 광고가 렌더링되지 않아요.
-            { width: "100%", height }
+          ? grow
+            ? // 이미지형: SDK 가 소재 크기를 알려주지 않아서, minHeight 로 두어 소재만큼 늘어나게 해요.
+              { width: "100%", minHeight: height }
+            : // 이미지형은 자리를 미리 잡아둬요. 높이 0 이면 광고가 렌더링되지 않아요.
+              { width: "100%", height }
           : {
               // 광고가 실제로 렌더되기 전(또는 noFill)에는 높이 0 으로 공간을 차지하지 않아요.
               minHeight: visible ? undefined : 0,
@@ -136,5 +144,5 @@ export function BannerAd({ slot, adGroupId, height }: BannerAdProps = {}) {
  * 하단 고정 배너는 창에 붙어 있어 본문 흐름을 막지 않고, 이건 끝까지 내려야 보여요.
  */
 export function ImageBannerAd() {
-  return <BannerAd adGroupId={AD_GROUP_ID_BANNER_IMAGE} height={200} />;
+  return <BannerAd adGroupId={AD_GROUP_ID_BANNER_IMAGE} height={200} grow />;
 }

@@ -1,10 +1,12 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 
 import { Button, Paragraph, useToast } from "@toss/tds-mobile";
 
+import { CoachMark } from "../../components/CoachMark";
 import { SampleLetterCard } from "../../components/SampleLetterCard";
 import { ScreenLayout } from "../../components/ScreenLayout";
 import { canRequestNotifyConsent, requestNotifyConsent } from "../../data/notify";
+import { useHomeTour } from "../../hooks/useHomeTour";
 import { EVENT, track } from "../../lib/analytics";
 import { useRouter } from "../../router";
 import { useSession } from "../../session";
@@ -22,6 +24,26 @@ export function HomeScreen() {
   const { openToast } = useToast();
 
   const isLoggedIn = profile != null;
+
+  // 첫 방문(로그인 전) 사람에게만 이 화면의 핵심 두 버튼을 코치마크로 짚어줘요.
+  const tourSteps = isLoggedIn ? [] : ["send", "receive"];
+  const { current: tourStep, index: tourIndex, total: tourTotal, next: tourNext, skip: tourSkip } =
+    useHomeTour(tourSteps);
+  const sendRef = useRef<HTMLDivElement>(null);
+  const receiveRef = useRef<HTMLDivElement>(null);
+
+  // 코치마크 진행 중엔 화면 아무 곳이나 눌러도 다음 단계로 — 건너뛰기 버튼 클릭만 그대로 통과시켜요.
+  useEffect(() => {
+    if (tourStep == null) return;
+    const onClick = (event: MouseEvent) => {
+      if ((event.target as HTMLElement | null)?.closest("[data-tour-skip]") != null) return;
+      event.preventDefault();
+      event.stopPropagation();
+      tourNext();
+    };
+    window.addEventListener("click", onClick, true);
+    return () => window.removeEventListener("click", onClick, true);
+  }, [tourStep, tourNext]);
 
   // 토스 로그인 유저에게 알림 수신 동의를 1회 요청해요 (데일리 리마인드 등 마케팅 푸시용).
   // 템플릿 코드가 없거나 브라우저면 아무 일도 일어나지 않아요.
@@ -136,18 +158,22 @@ export function HomeScreen() {
           gap: 12,
         }}
       >
-        <Button size="xlarge" display="full" onClick={handleFloat}>
-          ✉️ 편지 보내기
-        </Button>
-        <Button
-          size="xlarge"
-          display="full"
-          color="dark"
-          variant="weak"
-          onClick={handlePick}
-        >
-          📩 받은 편지함
-        </Button>
+        <div ref={sendRef}>
+          <Button size="xlarge" display="full" onClick={handleFloat}>
+            ✉️ 편지 보내기
+          </Button>
+        </div>
+        <div ref={receiveRef}>
+          <Button
+            size="xlarge"
+            display="full"
+            color="dark"
+            variant="weak"
+            onClick={handlePick}
+          >
+            📩 받은 편지함
+          </Button>
+        </div>
         {!isLoggedIn && (
           <Paragraph
             typography="t7"
@@ -193,6 +219,20 @@ export function HomeScreen() {
       >
         {bottleEmoji}
       </div>
+
+      {tourStep != null && (
+        <CoachMark
+          targetRef={tourStep === "send" ? sendRef : receiveRef}
+          message={
+            tourStep === "send"
+              ? "누가 받을지 모르니까 더 솔직해져요. 눌러서 편지를 띄워보세요."
+              : "누군가 띄운 편지가 무작위로 도착해요. 받은 편지엔 한 번 답장할 수 있어요."
+          }
+          index={tourIndex}
+          total={tourTotal}
+          onSkip={tourSkip}
+        />
+      )}
     </ScreenLayout>
   );
 }

@@ -22,8 +22,6 @@ import { SessionProvider, useSession } from "./session";
 // 하단 탭이 보이는 메인 화면들
 const TAB_SCREENS: RouteName[] = ["home", "receive", "replies"];
 
-const ONBOARDED_KEY = "sailboat:onboarded";
-
 function CurrentScreen() {
   const { route } = useRouter();
 
@@ -52,24 +50,9 @@ function CurrentScreen() {
 }
 
 function Shell() {
-  const { route, back, canGoBack, reset } = useRouter();
-  const { loading, profile } = useSession();
+  const { route, back, canGoBack } = useRouter();
+  const { loading } = useSession();
   const showTabs = TAB_SCREENS.includes(route.name);
-
-  // 처음 켠 사람에게는 소개 화면부터 보여줘요. 한 번 보고 나면 다시 뜨지 않고,
-  // 이미 로그인한 사람은 건너뛰어요.
-  // 소개 화면에서는 로그인을 요구하지 않아요(reset 이라 canGoBack=false → 둘러보기 모드).
-  // 로그인은 편지를 보내거나 받은 편지를 열 때(행동 직전)에 받아요.
-  useEffect(() => {
-    if (loading || profile != null) return;
-    try {
-      if (localStorage.getItem(ONBOARDED_KEY) != null) return;
-      localStorage.setItem(ONBOARDED_KEY, "1");
-    } catch {
-      return; // 저장이 막힌 환경에서는 매번 띄우지 않고 그냥 홈으로
-    }
-    reset({ name: "onboarding" });
-  }, [loading, profile, reset]);
 
   // 화면 조회 분석 (route 이름 기준)
   useEffect(() => {

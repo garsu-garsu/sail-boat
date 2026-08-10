@@ -14,6 +14,7 @@ import { ScreenLayout } from "../../components/ScreenLayout";
 import { ShareAppButton } from "../../components/ShareAppButton";
 import { getBottle } from "../../data/bottles";
 import { listReceivedReplies, markReplyRead } from "../../data/replies";
+import { EVENT, track } from "../../lib/analytics";
 import { useRouter } from "../../router";
 import { useSession } from "../../session";
 import type { Bottle, Reply, ReplyStatus } from "../../types";
@@ -98,6 +99,7 @@ export function RepliesScreen() {
       if (reply.status === "sent") {
         try {
           await markReplyRead(reply.id);
+          track(EVENT.replyReceived, {});
           await load();
         } catch {
           // 읽음 처리 실패는 무시해요.

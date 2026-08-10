@@ -42,8 +42,7 @@ export const EVENT = {
   bottleSent: "bottle_sent", // params: { zone, has_filter, fallback }
   noRecipient: "bottle_send_no_recipient", // params: { has_filter }
   replySent: "reply_sent",
-  chatStarted: "chat_started",
-  chatMessageSent: "chat_message_sent",
+  replyReceived: "reply_received", // 내가 띄운 편지에 온 답장을 처음 열어본 시점
   shareCompleted: "share_completed", // params: { context }
   adRewarded: "ad_rewarded", // params: { context }
   adInterstitial: "ad_interstitial_shown", // params: { context }

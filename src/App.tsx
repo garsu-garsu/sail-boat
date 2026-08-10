@@ -17,7 +17,7 @@ import { ReceiveScreen } from "./features/receive/ReceiveScreen";
 import { RepliesScreen } from "./features/replies/RepliesScreen";
 import { ReplyScreen } from "./features/reply/ReplyScreen";
 import { RouterProvider, useRouter, type RouteName } from "./router";
-import { SessionProvider, useSession } from "./session";
+import { SessionProvider } from "./session";
 
 // 하단 탭이 보이는 메인 화면들
 const TAB_SCREENS: RouteName[] = ["home", "receive", "replies"];
@@ -51,7 +51,6 @@ function CurrentScreen() {
 
 function Shell() {
   const { route, back, canGoBack } = useRouter();
-  const { loading } = useSession();
   const showTabs = TAB_SCREENS.includes(route.name);
 
   // 화면 조회 분석 (route 이름 기준)
@@ -99,24 +98,9 @@ function Shell() {
     }
   }, []);
 
-  if (loading) {
-    return (
-      <div
-        style={{
-          minHeight: "100dvh",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          background: "#6FB7E0",
-          color: "#fff",
-          fontSize: 32,
-        }}
-      >
-        ⛵
-      </div>
-    );
-  }
-
+  // 세션 조회가 끝날 때까지 기다리지 않고 바로 홈을 그려요.
+  // 기다리면 네트워크가 느린 기기에서 첫 화면이 수십 초까지 밀려요.
+  // (로그인 여부는 profile 이 도착하면 화면에 반영돼요)
   return (
     <div
       style={{

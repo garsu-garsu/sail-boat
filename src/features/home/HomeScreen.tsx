@@ -20,13 +20,15 @@ import {
 
 export function HomeScreen() {
   const { navigate } = useRouter();
-  const { profile, logout, isGuest } = useSession();
+  const { profile, logout, isGuest, loading } = useSession();
   const { openToast } = useToast();
 
   const isLoggedIn = profile != null;
 
   // 첫 방문(로그인 전) 사람에게만 이 화면의 핵심 두 버튼을 코치마크로 짚어줘요.
-  const tourSteps = isLoggedIn ? [] : ["send", "receive"];
+  // 세션을 아직 모르는 동안에는 띄우지 않아요 — 이미 로그인한 사람에게 잠깐 떴다 사라지면
+  // 그 사이 화면 터치까지 코치마크가 가로채요.
+  const tourSteps = loading || isLoggedIn ? [] : ["send", "receive"];
   const { current: tourStep, index: tourIndex, total: tourTotal, next: tourNext, skip: tourSkip } =
     useHomeTour(tourSteps);
   const sendRef = useRef<HTMLDivElement>(null);

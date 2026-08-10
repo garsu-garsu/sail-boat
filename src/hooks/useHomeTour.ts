@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 
 const KEY = "sailboat:home_tour_done";
 
@@ -15,12 +15,6 @@ export function useHomeTour(steps: string[]) {
       return -1;
     }
   });
-
-  // 보여줄 단계가 없으면(이미 로그인된 사람 등) 그냥 접어요 — "봤음" 표시는 하지 않아서,
-  // 나중에 로그아웃해서 진짜 처음 온 사람처럼 되면 그때 다시 뜰 수 있어요.
-  useEffect(() => {
-    if (index >= 0 && steps.length === 0) setIndex(-1);
-  }, [index, steps.length]);
 
   const skip = useCallback(() => {
     try {
